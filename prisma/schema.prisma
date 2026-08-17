@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  DOCTOR
+  NURSE
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  login       String    @unique
+  password    String
+  lastLoginAt DateTime?
+  role        UserRole
+
+  departments UserDepartment[]
+  records     Record[]
+
+  admittedHospitalizations   Hospitalization[] @relation("HospitalizationAdmittedBy")
+  dischargedHospitalizations Hospitalization[] @relation("HospitalizationDischargedBy")
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  code String @unique
+  name String
+
+  users            UserDepartment[]
+  hospitalizations Hospitalization[]
+}
+
+model UserDepartment {
+  userId       Int
+  departmentId Int
+
+  user       User       @relation(fields: [userId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  @@id([userId, departmentId])
+}
+
+model Patient {
+  id               Int     @id @default(autoincrement())
+  title            String?
+  firstName        String
+  lastName         String
+  birthNumber      String  @unique
+  insuranceCompany String
+
+  hospitalizations Hospitalization[]
+}
+
+model Hospitalization {
+  id                  Int       @id @default(autoincrement())
+  patientId           Int
+  departmentId        Int
+  admittedByUserId    Int
+  dischargedByUserId  Int?
+  medicalRecordNumber String    @unique
+  startAt             DateTime
+  endAt               DateTime?
+  createdAt           DateTime  @default(now())
+  diagnosis           String
+
+  patient      Patient    @relation(fields: [patientId], references: [id])
+  department   Department @relation(fields: [departmentId], references: [id])
+  admittedBy   User       @relation("HospitalizationAdmittedBy", fields: [admittedByUserId], references: [id])
+  dischargedBy User?      @relation("HospitalizationDischargedBy", fields: [dischargedByUserId], references: [id])
+
+  records     Record[]
+  medications Medication[]
+
+  @@index([admittedByUserId])
+  @@index([dischargedByUserId])
+}
+
+model Record {
+  id                Int      @id @default(autoincrement())
+  hospitalizationId Int
+  authorUserId      Int
+  createdAt         DateTime @default(now())
+  text              String
+
+  hospitalization Hospitalization @relation(fields: [hospitalizationId], references: [id])
+  author          User            @relation(fields: [authorUserId], references: [id])
+}
+
+model Medication {
+  id                Int      @id @default(autoincrement())
+  hospitalizationId Int
+  createdAt         DateTime @default(now())
+  drugName          String
+  schedule          String
+
+  hospitalization Hospitalization @relation(fields: [hospitalizationId], references: [id])
+}
