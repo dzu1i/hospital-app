@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { formatBirthNumber } from "@/lib/format-birth-number";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
 
 type Props = {
@@ -114,7 +115,7 @@ export default async function DepartmentPage({ params }: Props) {
                     </div>
 
                     <div className="mt-1.5 text-sm text-slate-500">
-                      R. č.: {hospitalization.patient.birthNumber}
+                      R. č.: {formatBirthNumber(hospitalization.patient.birthNumber)}
                     </div>
                   </div>
 

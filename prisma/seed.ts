@@ -138,7 +138,7 @@ async function main() {
       title: "Ing.",
       firstName: "Jan",
       lastName: "Novák",
-      birthNumber: "800101/1234",
+      birthNumber: "8001011234",
       insuranceCompany: "VZP",
     },
   });
@@ -147,7 +147,7 @@ async function main() {
     data: {
       firstName: "Eva",
       lastName: "Svobodová",
-      birthNumber: "905512/5678",
+      birthNumber: "9055125678",
       insuranceCompany: "ČPZP",
     },
   });
@@ -157,7 +157,7 @@ async function main() {
       title: "Mgr.",
       firstName: "Petr",
       lastName: "Dvořák",
-      birthNumber: "740303/2468",
+      birthNumber: "7403032468",
       insuranceCompany: "OZP",
     },
   });
@@ -166,7 +166,7 @@ async function main() {
     data: {
       firstName: "Jana",
       lastName: "Křížová",
-      birthNumber: "845624/1357",
+      birthNumber: "8456241357",
       insuranceCompany: "VZP",
     },
   });
@@ -175,7 +175,7 @@ async function main() {
     data: {
       firstName: "Martin",
       lastName: "Černý",
-      birthNumber: "920708/4321",
+      birthNumber: "9207084321",
       insuranceCompany: "ZPMV",
     },
   });
@@ -185,7 +185,7 @@ async function main() {
       title: "Bc.",
       firstName: "Alena",
       lastName: "Benešová",
-      birthNumber: "675418/9876",
+      birthNumber: "6754189876",
       insuranceCompany: "VoZP",
     },
   });
@@ -194,7 +194,7 @@ async function main() {
     data: {
       firstName: "Tomáš",
       lastName: "Procházka",
-      birthNumber: "880914/7412",
+      birthNumber: "8809147412",
       insuranceCompany: "VZP",
     },
   });
@@ -203,7 +203,7 @@ async function main() {
     data: {
       firstName: "Lucie",
       lastName: "Horáková",
-      birthNumber: "995101/3579",
+      birthNumber: "9951013579",
       insuranceCompany: "RBP",
     },
   });

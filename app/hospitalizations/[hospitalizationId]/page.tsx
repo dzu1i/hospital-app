@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { formatBirthNumber } from "@/lib/format-birth-number";
 import DischargeButton from "@/components/DischargeButton";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
 import NewRecordForm from "@/components/NewRecordForm";
@@ -130,7 +131,10 @@ export default async function HospitalizationPage({ params }: Props) {
             </div>
 
             <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
-              <Info label="Rodné číslo" value={patient.birthNumber} />
+              <Info
+                label="Rodné číslo"
+                value={formatBirthNumber(patient.birthNumber)}
+              />
 
               <Info
                 label="Pojišťovna"

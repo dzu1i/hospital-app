@@ -7,6 +7,7 @@ import {
   NewPatientFieldErrors,
   validateNewPatient,
 } from "@/lib/patient-validation";
+import { formatBirthNumber } from "@/lib/format-birth-number";
 
 type PatientOption = {
   id: number;
@@ -53,7 +54,12 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
     }
 
     return patients.filter((patient) =>
-      [patient.firstName, patient.lastName, patient.birthNumber]
+      [
+        patient.firstName,
+        patient.lastName,
+        patient.birthNumber,
+        formatBirthNumber(patient.birthNumber),
+      ]
         .join(" ")
         .toLocaleLowerCase("cs-CZ")
         .includes(normalizedSearch)
@@ -222,7 +228,8 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
                         {patient.firstName} {patient.lastName}
                       </span>
                       <span className="mt-1 block text-sm text-slate-500">
-                        RČ: {patient.birthNumber} · {patient.insuranceCompany}
+                        RČ: {formatBirthNumber(patient.birthNumber)} ·{" "}
+                        {patient.insuranceCompany}
                       </span>
                     </span>
                   </label>

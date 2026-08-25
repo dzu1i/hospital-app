@@ -48,6 +48,8 @@ Databázový model je definován v `prisma/schema.prisma` a vytvořen pomocí Pr
 
 `Medication` neobsahuje redundantní `patientId`, protože pacient je jednoznačně dostupný přes příslušnou hospitalizaci. Hospitalizace zároveň ukládá uživatele, který provedl přijetí, a volitelně uživatele, který provedl propuštění.
 
+Rodné číslo se v databázi ukládá normalizovaně jako řetězec obsahující pouze číslice. Uživatelské rozhraní jej při zobrazení formátuje do běžné podoby s lomítkem před posledními čtyřmi číslicemi.
+
 ## Číslo chorobopisu
 
 Číslo se vytváří automaticky ve formátu:
