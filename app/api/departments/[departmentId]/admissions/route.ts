@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { Prisma } from "@/app/generated/prisma/client";
 import { getSession } from "@/lib/auth";
 import { generateNextMedicalRecordNumber } from "@/lib/medical-record-number";
+import {
+  NewPatientFieldErrors,
+  validateNewPatient,
+} from "@/lib/patient-validation";
 import { prisma } from "@/lib/prisma";
 
 type AdmissionBody = {
@@ -18,6 +22,10 @@ type AdmissionBody = {
 
 function requiredString(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function firstValidationError(errors: NewPatientFieldErrors) {
+  return Object.values(errors)[0] ?? "Zkontrolujte údaje pacienta.";
 }
 
 function isUniqueConstraintError(error: unknown) {
@@ -187,18 +195,23 @@ export async function POST(
   }
 
   if (body.mode === "new") {
-    const title = requiredString(body.title) || null;
-    const firstName = requiredString(body.firstName);
-    const lastName = requiredString(body.lastName);
-    const birthNumber = requiredString(body.birthNumber);
-    const insuranceCompany = requiredString(body.insuranceCompany);
+    const { normalized, errors } = validateNewPatient({
+      title: requiredString(body.title),
+      firstName: requiredString(body.firstName),
+      lastName: requiredString(body.lastName),
+      birthNumber: requiredString(body.birthNumber),
+      insuranceCompany: requiredString(body.insuranceCompany),
+    });
 
-    if (!firstName || !lastName || !birthNumber || !insuranceCompany) {
+    if (Object.keys(errors).length > 0) {
       return NextResponse.json(
-        { error: "Vyplňte všechny povinné údaje o pacientovi." },
+        { error: firstValidationError(errors), fieldErrors: errors },
         { status: 400 }
       );
     }
+
+    const { firstName, lastName, birthNumber, insuranceCompany } = normalized;
+    const title = normalized.title || null;
 
     const existingPatient = await prisma.patient.findUnique({
       where: { birthNumber },

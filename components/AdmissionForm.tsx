@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  NewPatientFieldErrors,
+  validateNewPatient,
+} from "@/lib/patient-validation";
 
 type PatientOption = {
   id: number;
@@ -38,6 +42,7 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
     null
   );
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<NewPatientFieldErrors>({});
   const [loading, setLoading] = useState(false);
 
   const filteredPatients = useMemo(() => {
@@ -58,11 +63,13 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
   function changeMode(nextMode: AdmissionMode) {
     setMode(nextMode);
     setError("");
+    setFieldErrors({});
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setFieldErrors({});
 
     if (mode === "existing" && selectedPatientId === null) {
       setError("Vyberte existujícího pacienta.");
@@ -78,15 +85,33 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
       return;
     }
 
+    let newPatientValues;
+
+    if (mode === "new") {
+      const validation = validateNewPatient({
+        title: String(formData.get("title") ?? ""),
+        firstName: String(formData.get("firstName") ?? ""),
+        lastName: String(formData.get("lastName") ?? ""),
+        birthNumber: String(formData.get("birthNumber") ?? ""),
+        insuranceCompany: String(formData.get("insuranceCompany") ?? ""),
+      });
+
+      if (Object.keys(validation.errors).length > 0) {
+        setFieldErrors(validation.errors);
+        return;
+      }
+
+      newPatientValues = validation.normalized;
+    }
+
     const payload = {
       mode,
       patientId: mode === "existing" ? selectedPatientId : undefined,
-      title: mode === "new" ? formData.get("title") : undefined,
-      firstName: mode === "new" ? formData.get("firstName") : undefined,
-      lastName: mode === "new" ? formData.get("lastName") : undefined,
-      birthNumber: mode === "new" ? formData.get("birthNumber") : undefined,
-      insuranceCompany:
-        mode === "new" ? formData.get("insuranceCompany") : undefined,
+      title: newPatientValues?.title,
+      firstName: newPatientValues?.firstName,
+      lastName: newPatientValues?.lastName,
+      birthNumber: newPatientValues?.birthNumber,
+      insuranceCompany: newPatientValues?.insuranceCompany,
       startAt: startAt.toISOString(),
       diagnosis: formData.get("diagnosis"),
     };
@@ -104,6 +129,9 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
       const data = await response.json();
 
       if (!response.ok) {
+        if (data.fieldErrors) {
+          setFieldErrors(data.fieldErrors);
+        }
         setError(data.error ?? "Přijetí pacienta se nezdařilo.");
         return;
       }
@@ -204,15 +232,41 @@ export default function AdmissionForm({ departmentId, patients }: Props) {
           </div>
         ) : (
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            <Field label="Titul" name="title" />
-            <Field label="Jméno" name="firstName" required />
-            <Field label="Příjmení" name="lastName" required />
-            <Field label="Rodné číslo" name="birthNumber" required />
+            <Field
+              label="Titul"
+              name="title"
+              maxLength={50}
+              error={fieldErrors.title}
+            />
+            <Field
+              label="Jméno"
+              name="firstName"
+              maxLength={100}
+              required
+              error={fieldErrors.firstName}
+            />
+            <Field
+              label="Příjmení"
+              name="lastName"
+              maxLength={100}
+              required
+              error={fieldErrors.lastName}
+            />
+            <Field
+              label="Rodné číslo"
+              name="birthNumber"
+              inputMode="numeric"
+              maxLength={10}
+              required
+              error={fieldErrors.birthNumber}
+            />
             <Field
               label="Pojišťovna"
               name="insuranceCompany"
+              maxLength={100}
               required
               className="sm:col-span-2"
+              error={fieldErrors.insuranceCompany}
             />
           </div>
         )}
@@ -280,6 +334,9 @@ function Field({
   required = false,
   defaultValue,
   className,
+  error,
+  inputMode,
+  maxLength,
 }: {
   label: string;
   name: string;
@@ -287,6 +344,9 @@ function Field({
   required?: boolean;
   defaultValue?: string;
   className?: string;
+  error?: string;
+  inputMode?: "numeric" | "tel";
+  maxLength?: number;
 }) {
   return (
     <div className={className}>
@@ -301,9 +361,20 @@ function Field({
         name={name}
         type={type}
         defaultValue={defaultValue}
-        className={inputClassName}
+        className={`${inputClassName} ${
+          error ? "border-red-400 focus:border-red-500 focus:ring-red-500/15" : ""
+        }`}
         required={required}
+        inputMode={inputMode}
+        maxLength={maxLength}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${name}-error` : undefined}
       />
+      {error && (
+        <p id={`${name}-error`} className="mt-1.5 text-sm text-red-700">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import DischargeButton from "@/components/DischargeButton";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
+import NewRecordForm from "@/components/NewRecordForm";
 
 type Props = {
   params: Promise<{
@@ -229,6 +230,14 @@ export default async function HospitalizationPage({ params }: Props) {
               </p>
             </div>
 
+            {hospitalization.endAt === null && (
+              <NewRecordForm
+                hospitalizationId={hospitalization.id}
+                authorLogin={session.login}
+                authorRole={session.role}
+              />
+            )}
+
             {hospitalization.records.length === 0 ? (
               <p className="text-sm text-slate-500">
                 Nejsou evidovány žádné záznamy.
@@ -242,9 +251,9 @@ export default async function HospitalizationPage({ params }: Props) {
                   >
                     <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                       <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
-                        {record.author.role === "DOCTOR"
-                          ? "Lékařský záznam"
-                          : "Sesterský záznam"}
+                        {record.author.login} · {record.author.role === "DOCTOR"
+                          ? "Lékař"
+                          : "Sestra"}
                       </span>
 
                       <span className="text-xs text-slate-400">
