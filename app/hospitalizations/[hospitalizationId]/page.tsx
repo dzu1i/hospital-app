@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { formatBirthNumber } from "@/lib/format-birth-number";
+import { formatDepartmentLabel } from "@/lib/format-department-label";
 import DischargeButton from "@/components/DischargeButton";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
 import NewRecordForm from "@/components/NewRecordForm";
@@ -84,7 +85,7 @@ export default async function HospitalizationPage({ params }: Props) {
     <div className="min-h-screen bg-slate-50">
       <AuthenticatedHeader login={session.login} role={session.role} />
       <main className="px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-5xl">
         <div>
             <Link
                 href={`/departments/${hospitalization.departmentId}`}
@@ -98,8 +99,10 @@ export default async function HospitalizationPage({ params }: Props) {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-teal-700">
-                {hospitalization.department.code} ·{" "}
-                {hospitalization.department.name}
+                {formatDepartmentLabel(
+                  hospitalization.department.code,
+                  hospitalization.department.name
+                )}
               </p>
 
               <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">

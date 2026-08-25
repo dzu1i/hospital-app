@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import AdmissionForm from "@/components/AdmissionForm";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
 import { getSession } from "@/lib/auth";
+import { formatDepartmentLabel } from "@/lib/format-department-label";
 import { prisma } from "@/lib/prisma";
 
 type Props = {
@@ -57,7 +58,7 @@ export default async function AdmitPatientPage({ params }: Props) {
     <div className="min-h-screen bg-slate-50">
       <AuthenticatedHeader login={session.login} role={session.role} />
       <main className="px-4 py-8 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-5xl">
         <div>
           <Link
             href={`/departments/${id}`}
@@ -69,7 +70,10 @@ export default async function AdmitPatientPage({ params }: Props) {
 
         <div className="mb-7 mt-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-teal-700">
-            {access.department.code} · {access.department.name}
+            {formatDepartmentLabel(
+              access.department.code,
+              access.department.name
+            )}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
             Přijmout pacienta

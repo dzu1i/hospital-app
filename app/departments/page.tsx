@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { formatDepartmentLabel } from "@/lib/format-department-label";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
 
 export default async function DepartmentsPage() {
@@ -56,10 +57,7 @@ export default async function DepartmentsPage() {
                 className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
               >
                 <div className="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-teal-800">
-                  {department.name}
-                </div>
-                <div className="mt-3 inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold tracking-wide text-slate-600">
-                  {department.code}
+                  {formatDepartmentLabel(department.code, department.name)}
                 </div>
               </Link>
             ))}

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { formatBirthNumber } from "@/lib/format-birth-number";
+import { formatDepartmentLabel } from "@/lib/format-department-label";
 import AuthenticatedHeader from "@/components/AuthenticatedHeader";
 
 type Props = {
@@ -72,12 +73,11 @@ export default async function DepartmentPage({ params }: Props) {
 
         <div className="mb-7 mt-5 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-teal-700">
-              {access.department.code}
-            </div>
-
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
-              {access.department.name}
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+              {formatDepartmentLabel(
+                access.department.code,
+                access.department.name
+              )}
             </h1>
 
             <p className="mt-2 text-sm text-slate-600">
