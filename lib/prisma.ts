@@ -14,6 +14,9 @@ if (!ca) {
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL_SECURE!,
+  max: 2,
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 10000,
   ssl: {
     ca,
     rejectUnauthorized: true,
