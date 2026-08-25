@@ -1,6 +1,6 @@
 # Nemocniční informační systém
 
-Zjednodušená webová aplikace vytvořená jako interview assignment pro evidenci hospitalizovaných pacientů. Uživatel se přihlásí, vybere přidělené oddělení a otevře detail aktuální hospitalizace s údaji o pacientovi, medikaci a lékařských či sesterských záznamech podle své role.
+Zjednodušená webová aplikace vytvořená jako technický úkol k výběrovému řízení pro evidenci hospitalizovaných pacientů. Uživatel se přihlásí, vybere přidělené oddělení a otevře detail aktuální hospitalizace s údaji o pacientovi, medikaci a lékařských či sesterských záznamech podle své role.
 
 ## Funkcionalita
 
@@ -27,6 +27,12 @@ Omezení je aplikováno přímo v databázovém dotazu, nejde pouze o skrytí pr
 Nové zápisy lze přidávat pouze k aktivní hospitalizaci. Po jejím ukončení formulář není dostupný a vytvoření zápisu odmítne také serverové API.
 
 ## Databázový návrh
+
+Databázový model je definován v `prisma/schema.prisma` a vytvořen pomocí Prisma migrací v `prisma/migrations`.
+
+### ER diagram
+
+![ER diagram databáze](database/er-diagram.png)
 
 | Entita | Účel |
 | --- | --- |
@@ -140,7 +146,7 @@ npx prisma db seed
 
 Aplikace je navržena pro nasazení na Vercel a připojení k PostgreSQL databázi na Aiven. V nasazení je nutné nastavit stejné serverové proměnné prostředí jako při lokálním spuštění; certifikát ani jiné tajné hodnoty nesmí být součástí repozitáře.
 
-Live demo: [doplnit odkaz]
+Live demo: https://hospital-app-five-lemon.vercel.app/
 
 ## Bezpečnost a omezení
 
